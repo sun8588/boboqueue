@@ -1,0 +1,8 @@
+<Config>
+<Redis>
+<Addr>127.0.0.1</Addr>
+<Port>6378</Port>
+<PoolSize>500</PoolSize>
+</Redis>
+<TickTime>3</TickTime>
+</Config>
