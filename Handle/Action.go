@@ -14,7 +14,7 @@ import (
 )
 
 /**
-从文件中加载数据
+从文件中加载数据 
 **/
 func LoadTask(dataFile string) (*Entity.ReadyData, *Entity.WaitData, error) {
 	file, err := Model.New(dataFile)
