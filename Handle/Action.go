@@ -16,8 +16,8 @@ import (
 /**
 从文件中加载数据
 **/
-func LoadTask() (*Entity.ReadyData, *Entity.WaitData, error) {
-	file, err := Model.New("/home/dingbo/workspace/message/src/data.log")
+func LoadTask(dataFile string) (*Entity.ReadyData, *Entity.WaitData, error) {
+	file, err := Model.New(dataFile)
 	if err != nil {
 		return nil, nil, err
 	}

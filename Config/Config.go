@@ -21,10 +21,12 @@ type VsConfig struct {
 
 var vsConfig VsConfig
 var ConfigFile string
+var dataFile string
 func init() {
 	flag.StringVar(&ConfigFile,"c","","config file path")
+	flag.StringVar(&dataFile,"d","","data file path")
 	if ConfigFile==""{
-		ConfigFile="/home/dingbo/workspace/message/src/test.xml"
+		ConfigFile="./test.xml"
 	}
 	ParseXml(ConfigFile)
 }
@@ -54,4 +56,10 @@ func GetRedisConfig() redisConfig {
 
 func GetTickTime()time.Duration{
 	return vsConfig.TickTime
+}
+/**
+得到数据文件存放路径
+**/
+func GetDataFile()string{
+	return dataFile
 }

@@ -26,7 +26,7 @@ func main() {
 	listener, err := net.ListenTCP("tcp", tcpAddr)
 	Utils.LogErr(err)
 	i := 0
-	readyData, waitData, err := Handle.LoadTask()
+	readyData, waitData, err := Handle.LoadTask(Config.GetDataFile())
 	if err != nil {
 		Utils.LogErr(err)
 		return
