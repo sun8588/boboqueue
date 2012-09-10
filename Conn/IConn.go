@@ -20,6 +20,7 @@ func New(conn net.Conn) (IConn, error) {
 	if err != nil {
 		return nil, err
 	}
+	Utils.LogInfo("data=%v\n",data)
 	var retn IConn
 	if string(data) == "1" {
 	Utils.LogInfo("telnet\n")

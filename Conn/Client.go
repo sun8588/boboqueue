@@ -3,7 +3,7 @@ package Conn
 import (
 	"Utils"
 	"net"
-	"strconv"
+//	"strconv"
 	"strings"
 )
 
@@ -34,6 +34,7 @@ func (cc *CConn) ReadStr(num int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+//	Utils.LogInfo("read datastr=%v\n",data)
 	return strings.Trim(string(data), "\r\n\t "), nil
 }
 func (cc *CConn) ReadInt(num int) (int, error) {
@@ -41,9 +42,7 @@ func (cc *CConn) ReadInt(num int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	retn, err := strconv.Atoi(strings.Trim(string(data), "\r\n\t "))
-	if err != nil {
-		return 0, Utils.LogErr(err)
-	}
-	return retn, nil
+//	Utils.LogInfo("read data=%#v\n",data)
+	return  int(Utils.BytesToUint32(data)),nil
+	
 }

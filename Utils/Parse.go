@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net"
 	"io"
-	"log"
+//	"log"
 
 )
 
@@ -41,21 +41,27 @@ func BytesToUint32(buf []byte) uint32 {
 从net.conn 中读取固定长度
 **/
 func ReadConn(readLen int, conn net.Conn) ([]byte, error) {
+//	LogInfo("need read data=%d\n",readLen)
+	
 	dataBuf := make([]byte, readLen)
+	var dataLenTag int
 	for {
-		var dataLenTag int
 		tmpNum, err := conn.Read(dataBuf[dataLenTag:readLen])
-		log.Printf("read num=%d\n",tmpNum)
-		log.Printf("read data=%s\n",dataBuf)
 		if err != nil {
 			if err==io.EOF{
-			return dataBuf,nil
+				LogInfo("read EOF  num=%d\n", tmpNum)
+				return dataBuf,nil
 			}
-			//				Utils.LogInfo("read num=%d\n", tmpNum)
-			LogErr(err)
+			if err==io.ErrUnexpectedEOF{
+				LogInfo("read ErrUnexpectedEOF  num=%d\n", tmpNum)
+				return dataBuf,nil
+			}
+//			LogInfo("read num=%d\n", tmpNum)
+			LogInfo("err info=%v\n",err)
 			return dataBuf,err
 		}
-		LogInfo("datalentag=%d\n",dataLenTag)
+		LogInfo("read num=%d\n", tmpNum)
+		LogInfo("read data=%v\n", dataBuf)
 		dataLenTag += tmpNum
 		if dataLenTag >= readLen {
 			break

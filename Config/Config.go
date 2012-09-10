@@ -21,10 +21,11 @@ type VsConfig struct {
 
 var vsConfig VsConfig
 var ConfigFile string
-var dataFile string
+var DataFile string
 func init() {
-	flag.StringVar(&ConfigFile,"c","","config file path")
-	flag.StringVar(&dataFile,"d","","data file path")
+	flag.StringVar(&DataFile,"data","data.log","data file path")
+	flag.StringVar(&ConfigFile,"c","test.xml","config file path")
+	flag.Parse()
 	if ConfigFile==""{
 		ConfigFile="./test.xml"
 	}
@@ -61,5 +62,5 @@ func GetTickTime()time.Duration{
 得到数据文件存放路径
 **/
 func GetDataFile()string{
-	return dataFile
+	return DataFile
 }

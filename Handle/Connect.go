@@ -15,7 +15,7 @@ import (
 	//"Handle"
 	//	"os"
 	//	"error"
-	"strconv"
+//	"strconv"
 
 	//	"encoding/json" 
 	//"sync"
@@ -29,34 +29,39 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 		return
 	}
 	for {
-		command, err := handleConn.Read(4)
-		cmd, err := strconv.Atoi(string(command))
+		cmd, err := handleConn.ReadInt(4)
 		if err != nil {
-			Utils.LogErr(err)
 			continue
 		}
-		Utils.LogInfo("command is=%d\n", cmd)
+		Utils.LogInfo("command is=%#v\n", cmd)
+//		cmd:=handleConn.ReadInt(command)
+//		cmd, err := strconv.Atoi(string(command))
+//		return 
 		//		command, err := parseCommandWithTelnet(conn, 4)
-		if err != nil {
-			conn.Write([]byte(err.Error() + "\n"))
-			continue
-		}
+//		if err != nil {
+//			conn.Write([]byte(err.Error() + "\n"))
+//			continue
+//		}
 
 		switch cmd {
 		//添加task
 		case 100:
 			Utils.LogInfo("hande\n")
-			key, err := handleConn.Read(4)
+			keyLen, err := handleConn.ReadInt(4)
+			Utils.LogInfo("get key=%v\n", keyLen)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
 			}
+			key, err := handleConn.ReadStr(keyLen)
+			
 			Utils.LogInfo("get key=%v\n", key)
-			value, err := handleConn.Read(4)
+			valueLen, err := handleConn.ReadInt(4)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
 			}
+			value, err := handleConn.ReadStr(valueLen)
 			Utils.LogInfo("get value=%v\n", value)
 			expired, err := handleConn.ReadInt(4)
 			if err != nil {
@@ -64,7 +69,8 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 				continue
 			}
 			Utils.LogInfo("args=%s,%s,%d\n", key, value, expired)
-			err = Add(readyData, waitData, string(key), value, uint(expired))
+			return 
+			err = Add(readyData, waitData, key, value, uint(expired))
 			if err != nil {
 				handleConn.Write([]byte(err.Error() + "\n"))
 				continue
@@ -80,6 +86,7 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 				continue
 			}
 			Utils.LogInfo("num=%d\n", num)
+			return 
 			data, err := Get(readyData, waitData, num)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
@@ -88,12 +95,19 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 			handleConn.Write([]byte("done\n"))
 			//删除数据
 		case 102:
-			key, err := handleConn.ReadStr(4)
+			keyLen, err := handleConn.ReadInt(4)
+			Utils.LogInfo("get keylen=%v\n", keyLen)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
 			}
-
+			key, err := handleConn.ReadStr(keyLen)
+			if err != nil {
+				conn.Write([]byte(err.Error() + "\n"))
+				continue
+			}
+			Utils.LogInfo("args=%s\n", key)
+			return
 			err = Del(readyData, waitData, key)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
@@ -102,7 +116,13 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 			handleConn.Write([]byte("done\n"))
 			//增加到期时间
 		case 103:
-			key, err := handleConn.ReadStr(4)
+			keyLen, err := handleConn.ReadInt(4)
+			Utils.LogInfo("get keylen=%v\n", keyLen)
+			if err != nil {
+				conn.Write([]byte(err.Error() + "\n"))
+				continue
+			}
+			key, err := handleConn.ReadStr(keyLen)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
@@ -112,7 +132,8 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
 			}
-			Utils.LogInfo("expired=%d\n", expired)
+			Utils.LogInfo("key=%s,expired=%d\n",key, expired)
+			return 
 			err = AddExpired(readyData, waitData, key, uint(expired))
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
@@ -121,7 +142,13 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 			handleConn.Write([]byte("done\n"))
 			//减少到期时间
 		case 104:
-			key, err := handleConn.ReadStr(4)
+			keyLen, err := handleConn.ReadInt(4)
+			Utils.LogInfo("get keylen=%v\n", keyLen)
+			if err != nil {
+				conn.Write([]byte(err.Error() + "\n"))
+				continue
+			}
+			key, err := handleConn.ReadStr(keyLen)
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
@@ -131,7 +158,8 @@ func HandleClient(readyData *Entity.ReadyData, waitData *Entity.WaitData, conn n
 				conn.Write([]byte(err.Error() + "\n"))
 				continue
 			}
-			Utils.LogInfo("expired=%d\n", expired)
+			Utils.LogInfo("key=%s,expired=%d\n",key, expired)
+			return
 			err = DecExpired(readyData, waitData, key, uint(expired))
 			if err != nil {
 				conn.Write([]byte(err.Error() + "\n"))
