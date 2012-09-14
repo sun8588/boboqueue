@@ -11,13 +11,13 @@ type TaskErr struct{
 	ErrMsg string
 }
 func (e TaskErr) Error() string {
-    return fmt.Sprintf("%v: %v", e.ErrCode, e.ErrMsg)
+    return fmt.Sprintf("%v:%v", e.ErrCode, e.ErrMsg)
 }
 
 func init() {
 	err = map[int]string{
 		/******************工具错误***************/
-		100: "data_stream_parse_err", //数据流解析错误
+		100:"data_stream_parse_err", //数据流解析错误
 		101:"decode_json_err",	//解码json错误
 		102:"encode_json_err",	//加码json错误
 		103:"parse_config_err",	//解析配置文件错误
